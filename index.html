@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bộ Công Cụ Thuật Toán Mật Mã ATBMTT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f3ed;
+      --panel: #fffdf8;
+      --ink: #1f2933;
+      --muted: #5f6c7a;
+      --primary: #1b6b68;
+      --primary-2: #2ca58d;
+      --accent: #ef8f3d;
+      --line: #dde3dc;
+      --ok: #13795b;
+      --danger: #a03535;
+      --shadow: 0 16px 36px rgba(12, 34, 48, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Be Vietnam Pro", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(239, 143, 61, 0.2), transparent 28%),
+        radial-gradient(circle at 84% 2%, rgba(44, 165, 141, 0.25), transparent 32%),
+        linear-gradient(160deg, #f8f5ee 0%, #eff6f2 48%, #f6efe7 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1100px, 92vw);
+      margin: 2.2rem auto 3rem;
+    }
+
+    .hero {
+      background: linear-gradient(125deg, #173f5f, #1b6b68 55%, #2ca58d);
+      color: #f8fffe;
+      border-radius: 28px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      animation: rise 550ms ease;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      right: -90px;
+      top: -120px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.16);
+      filter: blur(2px);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+      letter-spacing: 0.3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      margin: 0.7rem 0 0;
+      font-size: 1rem;
+      max-width: 680px;
+      color: #def5f2;
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tabs {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.12);
+      color: #f6fffd;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 0.55rem 0.95rem;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: #11423f;
+      border-color: #fff;
+    }
+
+    .panel {
+      display: none;
+      margin-top: 1.3rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 1.1rem;
+      box-shadow: 0 8px 20px rgba(30, 52, 63, 0.08);
+      animation: fadeIn 320ms ease;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .panel h2 {
+      margin: 0.1rem 0 0.8rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.35rem;
+      color: #15384e;
+    }
+
+    .panel p.lead {
+      margin-top: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .field label {
+      font-weight: 600;
+      color: #234;
+      font-size: 0.92rem;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid #cfd8cf;
+      background: #fff;
+      border-radius: 11px;
+      padding: 0.64rem 0.74rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+
+    .field textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .actions {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    button.action {
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: "Space Grotesk", sans-serif;
+      padding: 0.62rem 1rem;
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #edf2eb;
+      color: #1f403c;
+      border: 1px solid #cdd7cf;
+    }
+
+    button.action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 14px rgba(31, 64, 57, 0.16);
+    }
+
+    .result {
+      margin-top: 0.95rem;
+      border-radius: 13px;
+      background: #f7faf6;
+      border: 1px solid #d6e2d8;
+      padding: 0.8rem;
+      font-family: Consolas, Menlo, monospace;
+      font-size: 0.92rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .result.error {
+      color: var(--danger);
+      background: #fff3f2;
+      border-color: #efc9c6;
+    }
+
+    .steps {
+      margin-top: 0.95rem;
+      border-top: 1px dashed #c8d3cc;
+      padding-top: 0.85rem;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .step {
+      border-left: 3px solid var(--accent);
+      background: #fffaf2;
+      border-radius: 8px;
+      padding: 0.5rem 0.7rem;
+      animation: slideIn 300ms ease both;
+    }
+
+    .step strong {
+      display: block;
+      color: #7a430d;
+      margin-bottom: 0.25rem;
+      font-size: 0.92rem;
+    }
+
+    .step code {
+      font-family: Consolas, Menlo, monospace;
+      font-size: 0.88rem;
+      color: #503016;
+      background: rgba(255, 196, 123, 0.2);
+      padding: 0.05rem 0.2rem;
+      border-radius: 5px;
+    }
+
+    .fine {
+      color: #55716d;
+      margin-top: 1rem;
+      font-size: 0.86rem;
+      text-align: center;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .shell {
+        margin-top: 1.2rem;
+      }
+
+      .hero {
+        border-radius: 20px;
+        padding: 1.3rem;
+      }
+
+      .panel {
+        padding: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>Bộ Công Cụ Thuật Toán Mật Mã</h1>
+      <p>Phiên bản làm lại với giao diện đẹp hơn, tương tác rõ hơn và có timeline từng bước giải để học và kiểm chứng kết quả.</p>
+      <div class="tabs" id="tabs">
+        <button class="tab-btn active" data-tab="perm">Hoán vị</button>
+        <button class="tab-btn" data-tab="mod">Biểu thức modulo</button>
+        <button class="tab-btn" data-tab="dsa">Chữ ký DSA</button>
+        <button class="tab-btn" data-tab="aes">Mã hóa AES</button>
+      </div>
+    </section>
+
+    <section class="panel active" id="panel-perm">
+      <h2>01. Mật mã hoán vị</h2>
+      <p class="lead">Nhập bản rõ và khóa hoán vị dạng dãy số, hệ thống sẽ mã hóa hoặc giải mã kèm từng bước theo khối.</p>
+      <div class="grid">
+        <div class="field" style="grid-column: 1 / -1;">
+          <label for="perm-text">Văn bản</label>
+          <textarea id="perm-text">INFORMATIONSECURITY</textarea>
+        </div>
+        <div class="field">
+          <label for="perm-key">Khóa (ví dụ: 3,1,4,2,5)</label>
+          <input id="perm-key" value="3,1,4,2,5" />
+        </div>
+        <div class="field">
+          <label for="perm-pad">Ký tự đệm</label>
+          <input id="perm-pad" value="X" maxlength="1" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="action btn-primary" id="perm-encrypt">Mã hóa</button>
+        <button class="action btn-secondary" id="perm-decrypt">Giải mã</button>
+      </div>
+      <div class="result" id="perm-result">Kết quả sẽ hiển thị ở đây.</div>
+      <div class="steps" id="perm-steps"></div>
+    </section>
+
+    <section class="panel" id="panel-mod">
+      <h2>02. Tính các biểu thức modulo cơ bản</h2>
+      <p class="lead">Input: a, b, x, y, n. Tính các biểu thức A1 đến A5 theo modulo n, có kiểm tra điều kiện tồn tại nghịch đảo.</p>
+      <div class="grid">
+        <div class="field">
+          <label for="mod-a">a</label>
+          <input id="mod-a" value="7" />
+        </div>
+        <div class="field">
+          <label for="mod-b">b</label>
+          <input id="mod-b" value="11" />
+        </div>
+        <div class="field">
+          <label for="mod-x">x</label>
+          <input id="mod-x" value="3" />
+        </div>
+        <div class="field">
+          <label for="mod-y">y</label>
+          <input id="mod-y" value="2" />
+        </div>
+        <div class="field">
+          <label for="mod-mod">n (modulus)</label>
+          <input id="mod-mod" value="13" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="action btn-primary" id="mod-run">Tính</button>
+      </div>
+      <div class="result" id="mod-result">Kết quả sẽ hiển thị ở đây.</div>
+      <div class="steps" id="mod-steps"></div>
+    </section>
+
+    <section class="panel" id="panel-dsa">
+      <h2>03. Chữ ký số DSA (học thuật)</h2>
+      <p class="lead">Mô phỏng ký và kiểm tra chữ ký với số nguyên nhỏ để dễ theo dõi từng phép tính.</p>
+      <div class="grid">
+        <div class="field">
+          <label for="dsa-p">p</label>
+          <input id="dsa-p" value="47" />
+        </div>
+        <div class="field">
+          <label for="dsa-q">q</label>
+          <input id="dsa-q" value="23" />
+        </div>
+        <div class="field">
+          <label for="dsa-g">g</label>
+          <input id="dsa-g" value="4" />
+        </div>
+        <div class="field">
+          <label for="dsa-x">x (private key)</label>
+          <input id="dsa-x" value="5" />
+        </div>
+        <div class="field">
+          <label for="dsa-k">k (số nonce)</label>
+          <input id="dsa-k" value="7" />
+        </div>
+        <div class="field">
+          <label for="dsa-hm">H(M)</label>
+          <input id="dsa-hm" value="11" />
+        </div>
+      </div>
+      <div class="actions">
+        <button class="action btn-primary" id="dsa-run">Ký và kiểm tra</button>
+      </div>
+      <div class="result" id="dsa-result">Kết quả sẽ hiển thị ở đây.</div>
+      <div class="steps" id="dsa-steps"></div>
+    </section>
+
+    <section class="panel" id="panel-aes">
+      <h2>04. Mã hóa AES-GCM</h2>
+      <p class="lead">Nhập thông điệp và cụm khóa, công cụ mã hóa AES-GCM qua Web Crypto API và hiển thị các bước xử lý dữ liệu.</p>
+      <div class="grid">
+        <div class="field" style="grid-column: 1 / -1;">
+          <label for="aes-plain">Plaintext</label>
+          <textarea id="aes-plain">Hello ATBMTT!</textarea>
+        </div>
+        <div class="field">
+          <label for="aes-key">Cụm khóa</label>
+          <input id="aes-key" value="nhom5-atbmtt-demo" />
+        </div>
+        <div class="field">
+          <label for="aes-iv">IV (tùy chọn, dạng text)</label>
+          <input id="aes-iv" placeholder="để trống để dùng ngẫu nhiên" />
+        </div>
+        <div class="field" style="grid-column: 1 / -1;">
+          <label for="aes-cipher">Ciphertext base64</label>
+          <textarea id="aes-cipher" placeholder="sau khi mã hóa, kết quả hiển thị ở đây"></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="action btn-primary" id="aes-encrypt">Mã hóa</button>
+        <button class="action btn-secondary" id="aes-decrypt">Giải mã</button>
+      </div>
+      <div class="result" id="aes-result">Kết quả sẽ hiển thị ở đây.</div>
+      <div class="steps" id="aes-steps"></div>
+    </section>
+
+    <p class="fine">Bản demo học tập - không dùng các tham số mẫu này cho hệ thống bảo mật thật.</p>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = {
+      perm: document.getElementById("panel-perm"),
+      mod: document.getElementById("panel-mod"),
+      dsa: document.getElementById("panel-dsa"),
+      aes: document.getElementById("panel-aes")
+    };
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((b) => b.classList.remove("active"));
+        tab.classList.add("active");
+        Object.values(panels).forEach((p) => p.classList.remove("active"));
+        panels[tab.dataset.tab].classList.add("active");
+      });
+    });
+
+    function renderResult(node, text, isError = false) {
+      node.textContent = text;
+      node.classList.toggle("error", isError);
+    }
+
+    function renderSteps(container, steps) {
+      container.innerHTML = "";
+      if (!steps || !steps.length) {
+        return;
+      }
+      steps.forEach((step, idx) => {
+        const item = document.createElement("div");
+        item.className = "step";
+        item.style.animationDelay = `${idx * 45}ms`;
+        item.innerHTML = `<strong>Bước ${idx + 1}: ${escapeHtml(step.title)}</strong><div>${step.detail}</div>`;
+        container.appendChild(item);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function parsePermutationKey(raw) {
+      const nums = raw
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean)
+        .map((v) => Number(v));
+      if (!nums.length || nums.some((n) => !Number.isInteger(n) || n <= 0)) {
+        throw new Error("Khóa không hợp lệ. Nhập dãy số nguyên dương, cách nhau bởi dấu phẩy.");
+      }
+      const sorted = [...nums].sort((a, b) => a - b);
+      for (let i = 0; i < sorted.length; i++) {
+        if (sorted[i] !== i + 1) {
+          throw new Error("Khóa phải là một hoán vị của 1..n (không lặp, không thiếu).");
+        }
+      }
+      return nums;
+    }
+
+    function chunkText(text, size, padChar) {
+      const chunks = [];
+      let src = text;
+      while (src.length % size !== 0) {
+        src += padChar;
+      }
+      for (let i = 0; i < src.length; i += size) {
+        chunks.push(src.slice(i, i + size));
+      }
+      return chunks;
+    }
+
+    function permutationEncrypt(text, key, padChar) {
+      const blocks = chunkText(text, key.length, padChar);
+      const encryptedBlocks = blocks.map((block) => key.map((k) => block[k - 1]).join(""));
+      return { blocks, encryptedBlocks, cipher: encryptedBlocks.join("") };
+    }
+
+    function permutationDecrypt(cipher, key) {
+      if (cipher.length % key.length !== 0) {
+        throw new Error("Độ dài bản mã phải chia hết cho độ dài khóa.");
+      }
+      const inv = new Array(key.length);
+      key.forEach((v, idx) => {
+        inv[v - 1] = idx;
+      });
+      const blocks = [];
+      for (let i = 0; i < cipher.length; i += key.length) {
+        const c = cipher.slice(i, i + key.length);
+        const plainChars = new Array(key.length);
+        for (let j = 0; j < key.length; j++) {
+          plainChars[j] = c[inv[j]];
+        }
+        blocks.push({ cipher: c, plain: plainChars.join("") });
+      }
+      return { blocks, plain: blocks.map((b) => b.plain).join("") };
+    }
+
+    const permText = document.getElementById("perm-text");
+    const permKey = document.getElementById("perm-key");
+    const permPad = document.getElementById("perm-pad");
+    const permResult = document.getElementById("perm-result");
+    const permSteps = document.getElementById("perm-steps");
+    let lastPermutationCipher = "";
+
+    document.getElementById("perm-encrypt").addEventListener("click", () => {
+      try {
+        const text = permText.value.trim();
+        const key = parsePermutationKey(permKey.value);
+        const pad = (permPad.value || "X")[0];
+        if (!text) {
+          throw new Error("Vui lòng nhập văn bản.");
+        }
+
+        const out = permutationEncrypt(text, key, pad);
+        lastPermutationCipher = out.cipher;
+        const steps = [
+          {
+            title: "Chuẩn hóa dữ liệu",
+            detail: `Van ban: <code>${escapeHtml(text)}</code>, khoa: <code>${key.join(",")}</code>, do dai block: <code>${key.length}</code>`
+          },
+          {
+            title: "Chia khối và đệm",
+            detail: out.blocks.map((b, i) => `B${i + 1}=<code>${escapeHtml(b)}</code>`).join(" ; ")
+          },
+          {
+            title: "Hoán vị từng khối",
+            detail: out.encryptedBlocks.map((b, i) => `C${i + 1}=<code>${escapeHtml(b)}</code>`).join(" ; ")
+          },
+          {
+            title: "Ghép bản mã",
+            detail: `Ciphertext = <code>${escapeHtml(out.cipher)}</code>`
+          }
+        ];
+        renderResult(permResult, out.cipher);
+        renderSteps(permSteps, steps);
+      } catch (err) {
+        renderResult(permResult, err.message, true);
+        renderSteps(permSteps, []);
+      }
+    });
+
+    document.getElementById("perm-decrypt").addEventListener("click", () => {
+      try {
+        const text = permText.value.trim();
+        const key = parsePermutationKey(permKey.value);
+        if (!text && !lastPermutationCipher) {
+          throw new Error("Vui lòng nhập bản mã vào ô Văn bản.");
+        }
+
+        const inputCipher = text || lastPermutationCipher;
+        const cipherToDecrypt = inputCipher.length % key.length === 0
+          ? inputCipher
+          : (lastPermutationCipher || "");
+
+        if (!cipherToDecrypt || cipherToDecrypt.length % key.length !== 0) {
+          throw new Error("Bạn đang nhập bản rõ hoặc dữ liệu chưa đúng định dạng bản mã. Hãy bấm Mã hóa trước, rồi Giải mã.");
+        }
+
+        const out = permutationDecrypt(cipherToDecrypt, key);
+        const steps = [
+          {
+            title: "Khởi tạo khóa nghịch đảo",
+            detail: `Khoa goc <code>${key.join(",")}</code> -> khoa nghich dao duoc su dung de dat lai vi tri ky tu.`
+          },
+          {
+            title: "Chọn bản mã để giải",
+            detail: `Dùng bản mã: <code>${escapeHtml(cipherToDecrypt)}</code>`
+          },
+          {
+            title: "Giải mã theo khối",
+            detail: out.blocks.map((b, i) => `B${i + 1}: <code>${escapeHtml(b.cipher)}</code> -> <code>${escapeHtml(b.plain)}</code>`).join(" ; ")
+          },
+          {
+            title: "Ghép lại bản rõ",
+            detail: `Plaintext = <code>${escapeHtml(out.plain)}</code>`
+          }
+        ];
+        renderResult(permResult, out.plain);
+        renderSteps(permSteps, steps);
+      } catch (err) {
+        renderResult(permResult, err.message, true);
+        renderSteps(permSteps, []);
+      }
+    });
+
+    function parseBigIntInput(id) {
+      const raw = document.getElementById(id).value.trim();
+      if (!/^[-]?\d+$/.test(raw)) {
+        throw new Error(`Giá trị ${id} phải là số nguyên.`);
+      }
+      return BigInt(raw);
+    }
+
+    function modPow(base, exp, mod, steps = []) {
+      if (mod <= 0n) {
+        throw new Error("Modulus phải > 0.");
+      }
+      let b = ((base % mod) + mod) % mod;
+      let e = exp;
+      let r = 1n;
+      let round = 0;
+      while (e > 0n) {
+        round += 1;
+        steps.push({
+          title: `Vòng lặp ${round}`,
+          detail: `e=<code>${e}</code>, bit cuoi=<code>${e & 1n}</code>, r=<code>${r}</code>, b=<code>${b}</code>`
+        });
+        if (e & 1n) {
+          r = (r * b) % mod;
+          steps.push({
+            title: "Nhân vì bit = 1",
+            detail: `r = (r*b) mod n = <code>${r}</code>`
+          });
+        }
+        b = (b * b) % mod;
+        e >>= 1n;
+        steps.push({
+          title: "Bình phương",
+          detail: `b = b^2 mod n = <code>${b}</code>, e dich phai -> <code>${e}</code>`
+        });
+      }
+      return r;
+    }
+
+    const modResult = document.getElementById("mod-result");
+    const modSteps = document.getElementById("mod-steps");
+
+    document.getElementById("mod-run").addEventListener("click", () => {
+      try {
+        const a = parseBigIntInput("mod-a");
+        const b = parseBigIntInput("mod-b");
+        const x = parseBigIntInput("mod-x");
+        const y = parseBigIntInput("mod-y");
+        const n = parseBigIntInput("mod-mod");
+        if (x < 0n || y < 0n) {
+          throw new Error("Số mũ x và y không được âm.");
+        }
+        if (n <= 1n) {
+          throw new Error("n phải lớn hơn 1.");
+        }
+
+        const norm = (v) => ((v % n) + n) % n;
+        const ax = modPow(a, x, n);
+        const by = modPow(b, y, n);
+
+        const a1 = norm(ax + by);
+        const a2 = norm(ax - by);
+        const a3 = norm(ax * by);
+
+        let a4Text = "Không tồn tại";
+        let a5Text = "Không tồn tại";
+        let byInv = null;
+
+        try {
+          byInv = modInverse(by, n);
+          a4Text = byInv.toString();
+          a5Text = norm(ax * byInv).toString();
+        } catch {
+          byInv = null;
+        }
+
+        const steps = [
+          {
+            title: "Khởi tạo",
+            detail: `Với <code>a=${a}</code>, <code>b=${b}</code>, <code>x=${x}</code>, <code>y=${y}</code>, <code>n=${n}</code>.`
+          },
+          {
+            title: "Tính lũy thừa cơ sở",
+            detail: `<code>a^x mod n = ${a}^${x} mod ${n} = ${ax}</code>, <code>b^y mod n = ${b}^${y} mod ${n} = ${by}</code>`
+          },
+          {
+            title: "Tính A1, A2, A3",
+            detail: `A1=(a^x+b^y) mod n = <code>${a1}</code>; A2=(a^x-b^y) mod n = <code>${a2}</code>; A3=(a^x*b^y) mod n = <code>${a3}</code>`
+          }
+        ];
+
+        if (byInv !== null) {
+          steps.push({
+            title: "Tính nghịch đảo cho A4 và A5",
+            detail: `A4=(b^y)^-1 mod n = <code>${byInv}</code>; A5=(a^x/b^y) mod n = a^x*(b^y)^-1 mod n = <code>${a5Text}</code>`
+          });
+        } else {
+          steps.push({
+            title: "Tính nghịch đảo cho A4 và A5",
+            detail: `Không tồn tại nghịch đảo của <code>b^y mod n = ${by}</code> theo modulo <code>${n}</code> (không nguyên tố cùng nhau), nên A4 và A5 không xác định.`
+          });
+        }
+
+        renderResult(
+          modResult,
+          `A1 = ${a1}\nA2 = ${a2}\nA3 = ${a3}\nA4 = ${a4Text}\nA5 = ${a5Text}`,
+          byInv === null
+        );
+        renderSteps(modSteps, steps);
+      } catch (err) {
+        renderResult(modResult, err.message, true);
+        renderSteps(modSteps, []);
+      }
+    });
+
+    function egcd(a, b) {
+      if (b === 0n) {
+        return [a, 1n, 0n];
+      }
+      const [g, x1, y1] = egcd(b, a % b);
+      return [g, y1, x1 - (a / b) * y1];
+    }
+
+    function modInverse(a, m) {
+      const [g, x] = egcd(((a % m) + m) % m, m);
+      if (g !== 1n) {
+        throw new Error(`Không tồn tại nghịch đảo modulo cho ${a} mod ${m}.`);
+      }
+      return (x % m + m) % m;
+    }
+
+    const dsaResult = document.getElementById("dsa-result");
+    const dsaSteps = document.getElementById("dsa-steps");
+
+    document.getElementById("dsa-run").addEventListener("click", () => {
+      try {
+        const p = parseBigIntInput("dsa-p");
+        const q = parseBigIntInput("dsa-q");
+        const g = parseBigIntInput("dsa-g");
+        const x = parseBigIntInput("dsa-x");
+        const k = parseBigIntInput("dsa-k");
+        const hm = parseBigIntInput("dsa-hm");
+
+        if ((p - 1n) % q !== 0n) {
+          throw new Error("Điều kiện DSA yêu cầu q chia hết (p-1).");
+        }
+        if (x <= 0n || x >= q) {
+          throw new Error("Private key x phải nằm trong (0, q).");
+        }
+        if (k <= 0n || k >= q) {
+          throw new Error("Nonce k phải nằm trong (0, q).");
+        }
+
+        const steps = [];
+        const y = modPow(g, x, p);
+        steps.push({
+          title: "Tạo public key",
+          detail: `y = g^x mod p = <code>${g}^${x} mod ${p} = ${y}</code>`
+        });
+
+        const r = modPow(g, k, p) % q;
+        if (r === 0n) {
+          throw new Error("r = 0, cần chọn lại k.");
+        }
+        steps.push({
+          title: "Tính r",
+          detail: `r = (g^k mod p) mod q = <code>${r}</code>`
+        });
+
+        const kInv = modInverse(k, q);
+        const s = (kInv * (hm + x * r)) % q;
+        if (s === 0n) {
+          throw new Error("s = 0, cần chọn lại k.");
+        }
+        steps.push({
+          title: "Tính s",
+          detail: `k^-1 mod q = <code>${kInv}</code>; s = k^-1*(H(M)+x*r) mod q = <code>${s}</code>`
+        });
+
+        const w = modInverse(s, q);
+        const u1 = (hm * w) % q;
+        const u2 = (r * w) % q;
+        const v = ((modPow(g, u1, p) * modPow(y, u2, p)) % p) % q;
+
+        steps.push({
+          title: "Kiểm tra chữ ký",
+          detail: `w=s^-1=<code>${w}</code>, u1=<code>${u1}</code>, u2=<code>${u2}</code>, v=<code>${v}</code>`
+        });
+
+        const valid = v === r;
+        steps.push({
+          title: "Kết luận",
+          detail: valid
+            ? `v == r (<code>${v}</code>) => chữ ký hợp lệ.`
+            : `v != r (v=<code>${v}</code>, r=<code>${r}</code>) => chữ ký KHÔNG hợp lệ.`
+        });
+
+        renderResult(
+          dsaResult,
+          `Public key y = ${y}\nSignature (r, s) = (${r}, ${s})\nVerify v = ${v}\nTrạng thái: ${valid ? "HỢP LỆ" : "KHÔNG HỢP LỆ"}`,
+          !valid
+        );
+        renderSteps(dsaSteps, steps);
+      } catch (err) {
+        renderResult(dsaResult, err.message, true);
+        renderSteps(dsaSteps, []);
+      }
+    });
+
+    const aesResult = document.getElementById("aes-result");
+    const aesSteps = document.getElementById("aes-steps");
+    const aesPlain = document.getElementById("aes-plain");
+    const aesCipher = document.getElementById("aes-cipher");
+
+    function bytesToBase64(bytes) {
+      let binary = "";
+      bytes.forEach((b) => {
+        binary += String.fromCharCode(b);
+      });
+      return btoa(binary);
+    }
+
+    function base64ToBytes(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+
+    async function deriveAesKey(keyPhrase) {
+      const enc = new TextEncoder();
+      const raw = enc.encode(keyPhrase);
+      const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", raw));
+      const aesRaw = hash.slice(0, 16);
+      const key = await crypto.subtle.importKey("raw", aesRaw, "AES-GCM", false, ["encrypt", "decrypt"]);
+      return { key, hash, aesRaw };
+    }
+
+    function asHex(arr) {
+      return Array.from(arr)
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+
+    function getIv(ivText) {
+      const enc = new TextEncoder();
+      if (!ivText) {
+        const random = crypto.getRandomValues(new Uint8Array(12));
+        return { iv: random, source: "random" };
+      }
+      const base = enc.encode(ivText);
+      const iv = new Uint8Array(12);
+      iv.set(base.slice(0, 12));
+      if (base.length < 12) {
+        for (let i = base.length; i < 12; i++) {
+          iv[i] = 48;
+        }
+      }
+      return { iv, source: "text" };
+    }
+
+    document.getElementById("aes-encrypt").addEventListener("click", async () => {
+      try {
+        const text = aesPlain.value;
+        const keyPhrase = document.getElementById("aes-key").value.trim();
+        const ivText = document.getElementById("aes-iv").value;
+        if (!text) {
+          throw new Error("Vui lòng nhập plaintext.");
+        }
+        if (!keyPhrase) {
+          throw new Error("Vui lòng nhập cụm khóa.");
+        }
+
+        const steps = [];
+        const enc = new TextEncoder();
+        const plainBytes = enc.encode(text);
+        steps.push({
+          title: "Mã hóa dữ liệu sang bytes",
+          detail: `Plaintext dài <code>${plainBytes.length}</code> bytes.`
+        });
+
+        const { key, hash, aesRaw } = await deriveAesKey(keyPhrase);
+        steps.push({
+          title: "Dẫn xuất khóa",
+          detail: `SHA-256(key phrase) = <code>${asHex(hash).slice(0, 32)}...</code>; lay 16 bytes dau lam AES-128 key: <code>${asHex(aesRaw)}</code>`
+        });
+
+        const { iv, source } = getIv(ivText);
+        steps.push({
+          title: "Tạo IV",
+          detail: `IV 12-byte (${source}) = <code>${asHex(iv)}</code>`
+        });
+
+        const cipherBuffer = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plainBytes);
+        const cipherBytes = new Uint8Array(cipherBuffer);
+        const packed = new Uint8Array(iv.length + cipherBytes.length);
+        packed.set(iv, 0);
+        packed.set(cipherBytes, iv.length);
+        const b64 = bytesToBase64(packed);
+        aesCipher.value = b64;
+
+        steps.push({
+          title: "Đóng gói ciphertext",
+          detail: `Ghep IV + ciphertext+tag, ma hoa base64: <code>${escapeHtml(b64.slice(0, 70))}${b64.length > 70 ? "..." : ""}</code>`
+        });
+
+        renderResult(aesResult, `AES-GCM mã hóa thành công.\nĐộ dài gói dữ liệu: ${packed.length} bytes.`);
+        renderSteps(aesSteps, steps);
+      } catch (err) {
+        renderResult(aesResult, err.message, true);
+        renderSteps(aesSteps, []);
+      }
+    });
+
+    document.getElementById("aes-decrypt").addEventListener("click", async () => {
+      try {
+        const b64 = aesCipher.value.trim();
+        const keyPhrase = document.getElementById("aes-key").value.trim();
+        if (!b64) {
+          throw new Error("Nhập ciphertext base64 trước khi giải mã.");
+        }
+        if (!keyPhrase) {
+          throw new Error("Vui lòng nhập cụm khóa.");
+        }
+
+        const packed = base64ToBytes(b64);
+        if (packed.length <= 12) {
+          throw new Error("Ciphertext không hợp lệ (quá ngắn).");
+        }
+        const iv = packed.slice(0, 12);
+        const ciphertext = packed.slice(12);
+
+        const steps = [
+          {
+            title: "Tách dữ liệu",
+            detail: `Lay 12 bytes dau lam IV: <code>${asHex(iv)}</code>, phan con lai la ciphertext+tag (${ciphertext.length} bytes).`
+          }
+        ];
+
+        const { key } = await deriveAesKey(keyPhrase);
+        const plainBuffer = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+        const text = new TextDecoder().decode(plainBuffer);
+
+        steps.push({
+          title: "Giải mã",
+          detail: `Xác thực tag thành công và phục hồi plaintext: <code>${escapeHtml(text)}</code>`
+        });
+
+        aesPlain.value = text;
+        renderResult(aesResult, "Giải mã thành công.");
+        renderSteps(aesSteps, steps);
+      } catch (err) {
+        renderResult(aesResult, `Lỗi giải mã: ${err.message}`, true);
+        renderSteps(aesSteps, []);
+      }
+    });
+  </script>
+</body>
+</html>
